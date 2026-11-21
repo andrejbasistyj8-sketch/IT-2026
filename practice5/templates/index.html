@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111d35">
+  <meta name="description" content="Інформаційно-аналітична система реєстрації, обліку та аналізу вхідних документів">
+  <title>ДокументКонтроль | Інформаційно-аналітична система</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Основна навігація">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true">▤</span><div><strong>Документ<span>Контроль</span></strong><small>Інформаційно-аналітична система</small></div></div>
+    <div class="nav-label">РОБОЧЕ МІСЦЕ</div>
+    <nav class="side-nav">
+      <a class="nav-item active" href="#overview"><span aria-hidden="true">▦</span> Огляд системи</a>
+      <a class="nav-item" href="#documents"><span aria-hidden="true">☷</span> Реєстр документів</a>
+      <a class="nav-item" href="#analytics"><span aria-hidden="true">◫</span> Аналітика</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="side-help"><span class="side-help-icon">ⓘ</span><strong>Навчальний проєкт</strong><p>Тема 1.4 · PostgreSQL, Flask, HTML, CSS та JavaScript.</p></div>
+      <div class="side-version"><span class="online-dot"></span> Локальна система · версія 1.0</div>
+    </div>
+  </aside>
+
+  <main class="main-content" id="overview">
+    <div class="topbar"><div class="breadcrumbs">Головна <span>/</span> <strong>Огляд системи</strong></div><div class="topbar-right"><span class="system-label"><span class="online-dot"></span> Система готова</span><div class="avatar" aria-label="Навчальний профіль">ІА</div></div></div>
+
+    <section class="page-intro" aria-label="Вступ">
+      <div><div class="eyebrow">РОБОЧА ПАНЕЛЬ АНАЛІТИКА</div><h1>Реєстр вхідних документів<span class="title-spark">.</span></h1><p>Єдиний простір для обліку, контролю виконання та аналізу документів.</p></div>
+      <div class="intro-actions"><button id="exportButton" class="button button-outline" type="button"><span aria-hidden="true">⇩</span> Експорт CSV</button><button id="addButton" class="button button-primary" type="button"><span aria-hidden="true">＋</span> Новий документ</button></div>
+    </section>
+
+    <section class="summary-grid" aria-label="Ключові показники">
+      <article class="metric-card metric-all"><div class="metric-top"><span>Усього документів</span><span class="metric-icon">▤</span></div><div class="metric-value" id="statTotal">—</div><div class="metric-foot">У загальному реєстрі</div></article>
+      <article class="metric-card metric-new"><div class="metric-top"><span>Нові</span><span class="metric-icon">✦</span></div><div class="metric-value" id="statNew">—</div><div class="metric-foot">Очікують опрацювання</div></article>
+      <article class="metric-card metric-progress"><div class="metric-top"><span>В роботі</span><span class="metric-icon">◷</span></div><div class="metric-value" id="statProgress">—</div><div class="metric-foot">Поточні завдання</div></article>
+      <article class="metric-card metric-overdue"><div class="metric-top"><span>Прострочені</span><span class="metric-icon">!</span></div><div class="metric-value" id="statOverdue">—</div><div class="metric-foot">Потребують уваги</div></article>
+    </section>
+
+    <section class="data-panel" id="documents">
+      <div class="section-header"><div><h2>Документи</h2><p>Реєстрація та оперативний контроль вхідної кореспонденції</p></div><span class="result-count" id="resultCount">Завантаження…</span></div>
+      <div class="filters">
+        <label class="search-wrap"><span class="sr-only">Пошук документів</span><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Пошук за номером, назвою або відправником…" autocomplete="off"></label>
+        <label class="filter-field"><span class="sr-only">Статус</span><select id="statusFilter"><option value="">Всі статуси</option><option>Новий</option><option>В роботі</option><option>Виконано</option></select></label>
+        <label class="filter-field"><span class="sr-only">Категорія</span><select id="categoryFilter"><option value="">Всі категорії</option><option>Лист</option><option>Звіт</option><option>План</option><option>Акт</option><option>Заява</option><option>Довідка</option><option>Інший</option></select></label>
+      </div>
+      <div class="date-filters"><span>Період надходження:</span><label>від <input id="dateFrom" type="date"></label><label>до <input id="dateTo" type="date"></label><button id="resetFilters" class="reset-btn" type="button">Очистити фільтри</button></div>
+      <div class="table-wrap"><table><thead><tr><th>РЕЄСТР. №</th><th>НАЗВА ДОКУМЕНТА</th><th>ВІДПРАВНИК</th><th>ДАТА</th><th>СТАТУС</th><th>ПРІОРИТЕТ</th><th class="actions-col">ДІЇ</th></tr></thead><tbody id="documentsBody"><tr><td colspan="7" class="empty-state">Завантажуємо документи…</td></tr></tbody></table></div>
+      <div class="table-footer"><span>Показано щонайбільше 500 записів. Для повного експорту використайте CSV.</span><span>Реєстр оновлюється після кожної операції</span></div>
+    </section>
+
+    <section class="analytics-section" id="analytics" aria-label="Аналітика документів">
+      <div class="analytics-heading"><div><h2>Аналітика та звітність</h2><p>Актуальна статистика на основі PostgreSQL</p></div><span id="todayLabel" class="period-tag"></span></div>
+      <div class="analytics-grid">
+        <article class="chart-panel"><div class="chart-header"><h3>Розподіл за статусами</h3><span class="chart-pill">Всі документи</span></div><div class="donut-area"><div class="donut" id="statusDonut" role="img" aria-label="Співвідношення статусів"><div class="donut-hole"><strong id="donutTotal">0</strong><small>документів</small></div></div><div class="legend" id="statusLegend"></div></div></article>
+        <article class="chart-panel"><div class="chart-header"><h3>Категорії документів</h3><span class="chart-pill">Топ 7</span></div><div class="category-bars" id="categoryChart"><p class="muted">Завантаження…</p></div></article>
+        <article class="chart-panel chart-wide"><div class="chart-header"><h3>Динаміка надходження</h3><span class="chart-pill">Останні 6 активних місяців</span></div><div class="month-chart" id="monthlyChart"><p class="muted">Завантаження…</p></div></article>
+      </div>
+    </section>
+    <footer class="main-footer"><span>© 2026 ДокументКонтроль · Навчальна ІАС</span><span>Дані зберігаються в PostgreSQL</span></footer>
+  </main>
+</div>
+
+<dialog class="document-dialog" id="documentDialog" aria-labelledby="dialogTitle">
+  <form id="documentForm" class="document-form">
+    <div class="dialog-heading"><div><div class="eyebrow">КАРТКА ДОКУМЕНТА</div><h2 id="dialogTitle">Новий документ</h2><p>Заповніть реєстраційні дані документа.</p></div><button id="closeDialog" class="icon-close" type="button" aria-label="Закрити">×</button></div>
+    <div class="form-grid">
+      <label class="form-field">Реєстраційний номер <span>*</span><input name="registration_number" maxlength="50" required placeholder="ВХ-2026/011"></label>
+      <label class="form-field">Категорія<select name="category"><option>Лист</option><option>Звіт</option><option>План</option><option>Акт</option><option>Заява</option><option>Довідка</option><option>Інший</option></select></label>
+      <label class="form-field wide">Назва документа <span>*</span><input name="title" maxlength="255" required placeholder="Коротка та змістовна назва"></label>
+      <label class="form-field wide">Відправник <span>*</span><input name="sender" maxlength="150" required placeholder="Установа або підрозділ"></label>
+      <label class="form-field">Дата надходження <span>*</span><input name="received_date" type="date" required></label>
+      <label class="form-field">Строк виконання<input name="due_date" type="date"></label>
+      <label class="form-field">Статус<select name="status"><option>Новий</option><option>В роботі</option><option>Виконано</option></select></label>
+      <label class="form-field">Пріоритет<select name="priority"><option>Звичайний</option><option>Низький</option><option>Високий</option></select></label>
+      <label class="form-field wide">Виконавець<input name="assignee" maxlength="150" placeholder="Прізвище або підрозділ"></label>
+      <label class="form-field wide">Короткий опис<textarea name="description" maxlength="3000" rows="3" placeholder="Додаткова інформація щодо документа"></textarea></label>
+    </div>
+    <p id="formError" class="form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button id="cancelDialog" class="button button-outline" type="button">Скасувати</button><button id="saveButton" class="button button-primary" type="submit">Зберегти документ</button></div>
+  </form>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
